@@ -35,3 +35,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 export default app;
+
+/*
+
+PORT=5000
+DATABASE_URL=mongodb+srv://Author-Backend:C1ppZd4du3snYVTw@cluster0.qahuo.mongodb.net/Author-Backend?retryWrites=true&w=majority&appName=Cluster0
+NODE_ENV=development
+*/
