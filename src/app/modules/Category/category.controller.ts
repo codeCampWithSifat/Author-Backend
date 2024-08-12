@@ -15,6 +15,7 @@ const createCategory = catchAsync(async (req, res) => {
 });
 
 const getAllCategory = catchAsync(async (req, res) => {
+  // console.log('Cookies', req.cookies);
   const result = await CategoryService.getAllCategory();
   sendResponse(res, {
     statusCode: httpStatus.OK,

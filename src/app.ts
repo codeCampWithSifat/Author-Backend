@@ -7,12 +7,15 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import globalErrorHandler from './app/middlewares/globalErrorhandler';
 import router from './app/routes';
 import httpStatus from 'http-status';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
 //parsers
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // application routes
 app.use('/api/v1', router);

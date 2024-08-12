@@ -106,7 +106,41 @@ const changePassword = async (userEmail: string, payload: IChangePassword) => {
   return result;
 };
 
+const refreshToken = async (token: string) => {
+  const decoded = AuthUtils.verifyToken(
+    token,
+    config.jwt_refresh_secret as string,
+  );
+  const isExitUser = await User.findOne({ email: decoded?.email });
+  if (!isExitUser) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Not Exit In The World');
+  }
+  if (isExitUser?.isDeleted) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Your Account Was Deleted');
+  }
+  if (isExitUser?.status === 'blocked') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Your Account Was Blocked');
+  }
+
+  const userPayload = {
+    _id: isExitUser?._id,
+    email: isExitUser?.email,
+    role: isExitUser?.role,
+  };
+
+  const accessToken = AuthUtils.createToken(
+    userPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expiresIn as string,
+  );
+
+  return {
+    accessToken,
+  };
+};
+
 export const AuthService = {
   loginUser,
   changePassword,
+  refreshToken,
 };
