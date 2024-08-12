@@ -9,7 +9,9 @@ const createCourse = async (payload: ICourse) => {
     payload.endDate,
   );
   payload.durationInWeeks = coursedurations;
-  const result = (await Course.create(payload)).populate('categoryId');
+  const result = (
+    await (await Course.create(payload)).populate('categoryId')
+  ).populate('createdBy');
   return result;
 };
 
@@ -39,7 +41,10 @@ const getAllFromDB = async (query: Record<string, unknown>) => {
   const excludesFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
 
   excludesFields.forEach((el) => delete queryObj[el]);
-  const filterQuery = searchQuery.find(queryObj).populate('categoryId');
+  const filterQuery = searchQuery
+    .find(queryObj)
+    .populate('categoryId')
+    .populate('createdBy');
 
   let sort = '-createdAt';
 

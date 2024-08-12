@@ -20,6 +20,7 @@ const courseSchemaValidation = z.object({
       level: z.string({ required_error: 'Level is Required' }),
       description: z.string({ required_error: 'Description Is Required' }),
     }),
+    createdBy: z.string({ required_error: 'Use Admin Id' }),
   }),
 });
 

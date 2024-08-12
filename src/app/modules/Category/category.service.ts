@@ -2,12 +2,12 @@ import { ICategory } from './category.interface';
 import { Category } from './category.model';
 
 const createCategory = async (payload: ICategory) => {
-  const result = await Category.create(payload);
+  const result = (await Category.create(payload)).populate('createdBy');
   return result;
 };
 
 const getAllCategory = async () => {
-  const result = await Category.find();
+  const result = await Category.find().populate('createdBy');
   return result;
 };
 
