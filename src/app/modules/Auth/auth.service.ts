@@ -59,6 +59,54 @@ const loginUser = async (payload: ILogin) => {
   };
 };
 
+type IChangePassword = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+const changePassword = async (userEmail: string, payload: IChangePassword) => {
+  const { currentPassword, newPassword } = payload;
+
+  const isExitUser = await User.findOne({ email: userEmail }).select(
+    '+password',
+  );
+
+  if (currentPassword === newPassword) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Current Password And New Password Could Not Be Same. It Would Be Different',
+    );
+  }
+
+  const verifyPassword = await bcrypt.compare(
+    currentPassword,
+    isExitUser?.password as string,
+  );
+  if (!verifyPassword) {
+    throw new ApiError(httpStatus.CONFLICT, 'Your Old Password Not Matched');
+  }
+
+  const hashedNewPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  const result = await User.findOneAndUpdate(
+    {
+      email: isExitUser?.email,
+      role: isExitUser?.role,
+    },
+    {
+      password: hashedNewPassword,
+      passwordChangedAt: new Date(),
+    },
+    { new: true, runValidators: true },
+  );
+
+  return result;
+};
+
 export const AuthService = {
   loginUser,
+  changePassword,
 };
